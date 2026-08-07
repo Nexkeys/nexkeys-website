@@ -1,0 +1,452 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════════════════
+   NexKeys Agency — Global Layer
+   Gold · Black · Midnight Gold
+   Cinematic, calm, generous. Motion is slow and deliberate.
+   ═══════════════════════════════════════════════════════════ */
+
+@layer base {
+  :root {
+    /* shadcn semantic roles, resolved to the NexKeys palette */
+    --background: 240 23% 3%;
+    --foreground: 0 0% 100%;
+
+    --card: 240 8% 5%;
+    --card-foreground: 0 0% 100%;
+
+    --popover: 45 20% 5%;
+    --popover-foreground: 0 0% 100%;
+
+    /* Brand Gold #C9A227 */
+    --primary: 46 68% 47%;
+    --primary-foreground: 240 23% 3%;
+
+    /* Midnight Gold #241C0E */
+    --secondary: 42 45% 10%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 60 36% 5%;
+    --muted-foreground: 0 0% 60%;
+
+    --accent: 42 45% 13%;
+    --accent-foreground: 46 68% 55%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 48 30% 10%;
+    --input: 48 30% 12%;
+    --ring: 46 84% 63%;
+
+    --radius: 0.875rem;
+
+    /* Raw values reused by hand-authored effects */
+    --glass: rgba(255, 248, 220, 0.03);
+    --glass-strong: rgba(255, 248, 220, 0.055);
+    --glass-border: rgba(201, 162, 39, 0.14);
+    --glass-border-lit: rgba(201, 162, 39, 0.38);
+    --nav-h: 72px;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+    /* Stop iOS silently inflating type in landscape. */
+    -webkit-text-size-adjust: 100%;
+    /* Anchors clear the fixed navbar instead of hiding under it. */
+    scroll-padding-top: calc(var(--nav-h) + 16px);
+  }
+
+  /* Lenis owns scrolling — disable native smooth when it's active */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+
+  body {
+    @apply bg-bg text-fg font-body;
+    font-size: 16px;
+    line-height: 1.65;
+    overflow-x: hidden;
+    /* NOTE: no `cursor:none` here. The legacy site hid the cursor globally
+       and left users cursorless if JS failed (plan §4.10). The custom
+       cursor now opts in via .nk-cursor-active, set only after it mounts. */
+  }
+
+  body.nk-cursor-active,
+  body.nk-cursor-active a,
+  body.nk-cursor-active button {
+    cursor: none;
+  }
+
+  /* Selection */
+  ::selection {
+    background: rgba(201, 162, 39, 0.28);
+    color: #fff;
+  }
+
+  /* Scrollbar — luxury gold gradient thumb */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #050508;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #f0cc50, #c9a227, #8b6914);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #e8bc2c;
+  }
+
+  /* Visible, on-brand focus for keyboard users */
+  :focus-visible {
+    outline: 2px solid #f0cc50;
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-head;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* ═════════════════════════════════════════════════════════
+     THE 128px CONTRACT
+     Structural guarantees that hold at every width, so no
+     individual component has to remember them.
+     ═════════════════════════════════════════════════════════ */
+
+  /* Nothing may exceed its container — the single most common
+     source of a sideways-scrolling page. */
+  img,
+  svg,
+  video,
+  canvas,
+  iframe {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Long unbroken strings (URLs, emails, IDs) wrap instead of
+     forcing the whole column wide.
+
+     Set ONCE on body rather than enumerated per tag, because
+     `overflow-wrap` inherits. The tag-list version missed the
+     legal contact cards — their links sit inside a plain <div>,
+     which was not on the list — and an email address blew the
+     page ~11px wide at 320px, a real iPhone SE width. Inheriting
+     covers every element, including ones not written yet. */
+  body {
+    overflow-wrap: break-word;
+  }
+
+  /* Form controls inherit the page font and never fall below
+     16px: iOS auto-zooms the viewport on focus below that, which
+     reads to the user as the site jumping around. */
+  input,
+  textarea,
+  select,
+  button {
+    font-family: inherit;
+    font-size: max(16px, 1em);
+  }
+
+  /* Accessible tap targets (plan §10.2). Applied by default so
+     every future button inherits it rather than opting in. */
+  button,
+  [role='button'],
+  a[data-tap],
+  input[type='submit'] {
+    min-height: 44px;
+  }
+}
+
+@layer components {
+  /* ── Glassmorphism, formalised ─────────────────────────── */
+  .glass {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .glass-strong {
+    background: var(--glass-strong);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(24px) saturate(140%);
+    -webkit-backdrop-filter: blur(24px) saturate(140%);
+  }
+
+  /* Midnight-gold glass — for sections that sit on the warm ground */
+  .glass-midnight {
+    background: linear-gradient(
+      135deg,
+      rgba(36, 28, 14, 0.55) 0%,
+      rgba(10, 9, 6, 0.65) 100%
+    );
+    border: 1px solid rgba(122, 95, 30, 0.22);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  /* ── Gold gradient text ────────────────────────────────── */
+  .text-gradient-gold {
+    background: linear-gradient(90deg, #f0cc50 0%, #c9a227 50%, #9a7318 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  /* Split logo treatment — "Nex" gold, "Keys" white */
+  .text-logo-split {
+    background: linear-gradient(
+      90deg,
+      #e8bc2c 0%,
+      #c9a227 38%,
+      #ffffff 45%,
+      #ffffff 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  /* ── Eyebrow label with gold rule ──────────────────────── */
+  .eyebrow {
+    @apply inline-flex items-center gap-3 font-head text-label font-bold uppercase;
+    color: rgba(255, 255, 255, 0.4);
+  }
+  .eyebrow::before {
+    content: '';
+    width: 28px;
+    height: 2px;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #e8bc2c, #9a7318);
+  }
+
+  /* ── Metallic sheen sweep (buttons, cards) ─────────────── */
+  .sheen {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .sheen::after {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    left: -130%;
+    width: 70%;
+    background: linear-gradient(
+      105deg,
+      transparent 0%,
+      rgba(255, 248, 200, 0.07) 40%,
+      rgba(255, 248, 200, 0.16) 50%,
+      rgba(255, 248, 200, 0.07) 60%,
+      transparent 100%
+    );
+    transform: skewX(-18deg);
+    pointer-events: none;
+    transition: left 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .sheen:hover::after {
+    left: 140%;
+  }
+
+  /* ── Section grounds ───────────────────────────────────── */
+  .ground-midnight {
+    background: linear-gradient(180deg, #050508 0%, #0a0906 40%, #1a1509 100%);
+  }
+  .ground-midnight-soft {
+    background: linear-gradient(180deg, #0a0906 0%, #0c0c0e 100%);
+  }
+
+  /* Hairline gold divider that shimmers */
+  .divider-gold {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(201, 162, 39, 0.35) 30%,
+      rgba(245, 215, 110, 0.6) 50%,
+      rgba(201, 162, 39, 0.35) 70%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    @apply animate-shimmer;
+  }
+
+  /* ── Fine grid overlay (hero, footer) ──────────────────── */
+  .grid-overlay {
+    background-image:
+      linear-gradient(rgba(201, 162, 39, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201, 162, 39, 0.02) 1px, transparent 1px);
+    background-size: 72px 72px;
+    mask-image: radial-gradient(ellipse at center, #000 0%, transparent 72%);
+    -webkit-mask-image: radial-gradient(ellipse at center, #000 0%, transparent 72%);
+  }
+
+  /* ── Film grain — sits above everything, below cursor ──── */
+  .grain::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    pointer-events: none;
+    opacity: 0.42;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    background-size: 180px 180px;
+  }
+
+  /* Constrained reading measure for legal/blog prose */
+  .measure {
+    max-width: 68ch;
+  }
+}
+
+@layer utilities {
+  .content-auto {
+    content-visibility: auto;
+  }
+
+  /* Wide content escape hatch — never let the body scroll sideways */
+  .scroll-x {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE PERFORMANCE
+   The look is preserved; only its cost is reduced.
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 767px), (pointer: coarse) {
+  /* `backdrop-filter` is by far the most expensive property in this design
+     system: it forces the compositor to re-sample everything behind the
+     element every frame, and mobile GPUs charge roughly by blur RADIUS. At
+     these sizes the glass panels cover a large share of the viewport, so a
+     24px blur can cost more frame budget than every animation combined.
+     Halving the radius is visually near-identical at phone dimensions and
+     is the single biggest scroll-smoothness win on mobile. */
+  .glass {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .glass-strong {
+    backdrop-filter: blur(12px) saturate(125%);
+    -webkit-backdrop-filter: blur(12px) saturate(125%);
+  }
+  .glass-midnight {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  /* Film grain is a full-viewport composited layer. Keep the texture, lower
+     the weight. */
+  .grain::after {
+    opacity: 0.3;
+    background-size: 140px 140px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ULTRA-COMPACT — 128px to 400px
+   Chrome shrinks so CONTENT keeps the room.
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 400px) {
+  :root {
+    --nav-h: 60px;
+  }
+
+  /* Decorative rules and grids scale with the frame. */
+  .eyebrow::before {
+    width: 16px;
+  }
+  .grid-overlay {
+    background-size: 40px 40px;
+  }
+
+  /* Backdrop blur off entirely below this width. There is not enough
+     surface for the effect to register, and the cost is unchanged. */
+  .glass,
+  .glass-strong,
+  .glass-midnight {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .glass,
+  .glass-strong {
+    background: rgba(14, 12, 8, 0.92);
+  }
+
+  /* Pill and rounded buttons carry desktop padding (px-7 / px-8 = 56–64px of
+     horizontal padding) that simply cannot fit here — measured as the cause of
+     overflow on /, /work and /contact at 128px. Capped to the container and
+     tightened. The attribute selectors outrank Tailwind's padding utilities on
+     specificity, so no per-button edits are needed and future buttons inherit
+     the protection. */
+  a[class*='rounded-pill'],
+  button[class*='rounded-pill'],
+  span[class*='rounded-pill'],
+  a[class*='rounded-xl'],
+  button[class*='rounded-xl'] {
+    max-width: 100%;
+    padding-left: 0.875rem;
+    padding-right: 0.875rem;
+  }
+
+  /* `anywhere`, not `break-word`.
+     They look identical but differ in one decisive way: `break-word` does NOT
+     reduce an element's min-content width, so a flex or grid item sized by its
+     content still reserves room for the longest unbroken word. `anywhere` does
+     shrink min-content, which is what actually lets an email address or long
+     URL stop widening the page here. Scoped to ultra-narrow because it breaks
+     words more eagerly than is desirable in normal prose. */
+  body {
+    overflow-wrap: anywhere;
+  }
+
+  /* Eyebrow labels carry 0.2em tracking plus a 16px rule — enough to overflow
+     on their own at this width. Let them wrap and tighten the tracking. */
+  .eyebrow {
+    flex-wrap: wrap;
+    letter-spacing: 0.1em;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   REDUCED MOTION — every effect in this codebase respects it
+   ═══════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .sheen::after {
+    display: none;
+  }
+}
