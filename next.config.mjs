@@ -8,10 +8,12 @@ const nextConfig = {
        `import { Menu } from 'lucide-react'` pulls the whole index before this
        is enabled. Same story for the framer-motion and Radix barrels. This is
        the cheapest bundle win available to us. */
+    /* `date-fns` is deliberately absent: nothing in this codebase imports it.
+       It exists only as react-day-picker's peer dependency, and listing a
+       package we never import here achieves nothing. */
     optimizePackageImports: [
       'lucide-react',
       'framer-motion',
-      'date-fns',
       '@react-three/drei',
     ],
   },

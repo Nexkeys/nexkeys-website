@@ -105,6 +105,39 @@ pointer with rings, glow, letters and chips at separate `translateZ` depths.
 
 # CHANGELOG
 
+## [2.0.0-alpha.7] — 2026-08-08 · Deployment fix
+
+### Fixed — Vercel build failed on `npm install` (ERESOLVE)
+
+```
+peer date-fns@"^2.28.0 || ^3.0.0" from react-day-picker@8.10.2
+Found: date-fns@4.4.0
+```
+
+`date-fns` was pinned to `^4.1.0`, outside the peer range
+`react-day-picker@8` accepts. Pinned to **`^3.6.0`**.
+
+**Why it passed locally and failed on Vercel:** the local `node_modules` was
+installed incrementally, so npm never re-resolved the tree. Vercel installs from
+scratch, which is where strict peer resolution actually runs. Verified by
+deleting `node_modules` and reinstalling — reproducing the failure condition
+rather than trusting the incremental result.
+
+**Why the downgrade is safe:** nothing in this codebase imports `date-fns`. All
+date formatting uses native `toLocaleDateString`. It is present solely as
+`react-day-picker`'s peer, so the major version is that library's concern, not
+ours. `npm ls` confirms a single deduped `date-fns@3.6.0`.
+
+- Removed `date-fns` from `optimizePackageImports` — listing a package we never
+  import achieves nothing.
+
+### Verified
+- Clean `rm -rf node_modules && npm install` — exit 0, no ERESOLVE.
+- `tsc --noEmit` — clean.
+- `next build` — 21 routes, exit 0, zero warnings.
+
+---
+
 ## [2.0.0-alpha.6] — 2026-08-07 · Conversion gaps closed · Security rules
 
 ### Fixed — 1,613 words of work copy that had been silently dropped
