@@ -105,6 +105,45 @@ pointer with rings, glow, letters and chips at separate `translateZ` depths.
 
 # CHANGELOG
 
+## [2.0.0-alpha.8] — 2026-08-09 · Cookie consent: reject option
+
+### Added — a real choice, not just "Accept"
+- **Reject button**, same size as Accept, side by side, one click each. Making
+  reject harder to reach than accept — buried in a sub-panel or styled as a
+  faint text link — is a dark pattern and explicitly non-compliant under GDPR,
+  which the NDPR mirrors.
+- `lib/consent.ts` — typed consent state, separate from the banner so anything
+  that might set a non-essential cookie can check it without importing UI.
+  Exposes `getConsent()`, `setConsent()` and `hasAnalyticsConsent()`, plus a
+  `nk:consent-change` window event.
+- `hasAnalyticsConsent()` defaults to **false** when no choice has been made.
+  Opt-in, not opt-out: silence is not consent.
+- Backwards compatible: earlier builds stored the string `'true'` for accepted,
+  which is still honoured, so returning visitors are not asked twice.
+
+### Changed — banner copy
+Was *"By continuing to visit this site you agree to our use of cookies."*
+Consent-by-continuing is not valid consent once a reject option exists, and it
+directly contradicted the button next to it. Now states that essential cookies
+are always on and the rest is the visitor's choice.
+
+### Honest note on what Reject currently does
+This site sets **no** tracking or advertising cookies today. Firebase Analytics
+is deliberately not initialised — `lib/firebase.ts` calls only `getFirestore()`
+and `getAuth()`, and the `measurementId` in the config is unused (plan O17).
+So there is currently nothing for "reject" to switch off.
+
+That is exactly why `hasAnalyticsConsent()` exists. **If analytics is ever added
+(O17), it must be gated on that call** — otherwise the reject button becomes a
+lie, which is worse than not offering one.
+
+### Verified
+- `tsc --noEmit` — clean.
+- `next build` — 21 routes, exit 0, zero warnings.
+- Confirmed by grep that nothing calls `getAnalytics`.
+
+---
+
 ## [2.0.0-alpha.7] — 2026-08-08 · Deployment fix
 
 ### Fixed — Vercel build failed on `npm install` (ERESOLVE)

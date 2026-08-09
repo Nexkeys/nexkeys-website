@@ -4,19 +4,29 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 
-const STORAGE_KEY = 'cookieConsent';
+import { getConsent, setConsent, type ConsentChoice } from '@/lib/consent';
 
+/**
+ * Cookie consent banner.
+ *
+ * Offers a genuine choice: Accept and Reject are the same size, sit side by
+ * side, and take one click each. Making "reject" harder than "accept" — buried
+ * in a settings sub-panel, or styled as a faint text link — is a dark pattern
+ * and is explicitly non-compliant under GDPR, which the NDPR mirrors.
+ *
+ * The copy no longer says "by continuing you agree". Consent-by-continuing is
+ * not valid consent once a reject option exists, and it would contradict the
+ * button sitting next to it.
+ */
 export function CookieConsent() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
-    try {
-      if (localStorage.getItem(STORAGE_KEY)) return;
-    } catch {
-      // Storage blocked (private mode) — don't nag.
-      return;
-    }
+
+    // Any prior answer — accepted OR rejected — means do not ask again.
+    if (getConsent() !== null) return;
+
     const t = setTimeout(() => !cancelled && setShow(true), 1400);
     return () => {
       cancelled = true;
@@ -24,12 +34,8 @@ export function CookieConsent() {
     };
   }, []);
 
-  const accept = () => {
-    try {
-      localStorage.setItem(STORAGE_KEY, 'true');
-    } catch {
-      /* ignore */
-    }
+  const choose = (choice: ConsentChoice) => {
+    setConsent(choice);
     setShow(false);
   };
 
@@ -47,19 +53,35 @@ export function CookieConsent() {
         >
           <div className="container flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-body-sm text-fg-60">
-              We use cookies to enhance your experience. By continuing to visit this site you
-              agree to our use of cookies.{' '}
-              <Link href="/privacy" className="font-semibold text-gold hover:text-gold-light">
+              We use cookies to understand how this site is used. Essential
+              cookies are always on; everything else is up to you.{' '}
+              <Link
+                href="/privacy"
+                className="font-semibold text-gold hover:text-gold-light"
+              >
                 Learn more
               </Link>
             </p>
-            <button
-              type="button"
-              onClick={accept}
-              className="w-full shrink-0 rounded-pill bg-gradient-gold px-7 py-2.5 font-head text-sm font-bold text-bg transition-transform duration-300 hover:-translate-y-0.5 sm:w-auto"
-            >
-              Accept
-            </button>
+
+            {/* Both actions are the same size and one click each — a reject
+                that is harder to reach than accept is not a real choice. */}
+            <div className="flex w-full shrink-0 flex-col gap-2.5 xs:flex-row sm:w-auto">
+              <button
+                type="button"
+                onClick={() => choose('rejected')}
+                className="w-full rounded-pill border border-gold/30 px-7 py-2.5 font-head text-sm font-bold text-fg-80 transition-colors duration-300 hover:border-gold/60 hover:text-white xs:w-auto"
+              >
+                Reject
+              </button>
+
+              <button
+                type="button"
+                onClick={() => choose('accepted')}
+                className="w-full rounded-pill bg-gradient-gold px-7 py-2.5 font-head text-sm font-bold text-bg transition-transform duration-300 hover:-translate-y-0.5 xs:w-auto"
+              >
+                Accept
+              </button>
+            </div>
           </div>
         </motion.div>
       )}
