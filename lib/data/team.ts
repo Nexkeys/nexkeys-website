@@ -1,13 +1,8 @@
 import type { TeamMember } from '@/lib/types';
 
 /**
- * The team — two members, confirmed 2026-08-06 (plan §15 D2).
- * `team/aleksa.jpg` and `team/kristiyan.jpg` from the legacy assets are stale
- * and are deliberately NOT carried over.
- *
- * Bios are verbatim from legacy about.html, with ONE correction (plan §15 D3):
- * Obediah's bio said "His background in secure web development" while using
- * she/her elsewhere. Corrected to "Her background".
+ * The team — Ernest is the active primary team member on the site.
+ * Obediah's legacy profile and assets have been removed entirely.
  */
 export const TEAM: TeamMember[] = [
   {
@@ -15,38 +10,12 @@ export const TEAM: TeamMember[] = [
     name: 'Ernest Uwaoma',
     role: 'Founder & CEO',
     photo: '/images/team/ernest.jpg',
-    bio: 'Ernest blends technical mastery with visionary architecture. His expertise in front-end, full-stack, and DevOps engineering allows NexKeys to deliver robust, scalable, and secure software systems. Passionate about innovation and efficiency, Ernest ensures that every project not only meets industry standards but exceeds client expectations. His background in Computer and Software Engineering from Middlesex University equips him to navigate complex challenges with precision and creativity, turning ambitious ideas into polished digital products that drive real business results.',
-    skills: ['Full-Stack', 'Architecture', 'DevOps', 'Frontend'],
+    bio: 'Ernest blends technical mastery with visionary architecture and leadership. His expertise in front-end, full-stack, and DevOps engineering allows NexKeys to deliver robust, scalable, and secure software systems. Passionate about innovation and efficiency, He ensures that every project not only meets industry standards but exceeds client expectations. His background in Computer and Software Engineering from Middlesex University equips him to navigate complex challenges with precision and creativity, turning ambitious ideas into polished digital products that drive real business results, as well as leading the entire NexKeys team.',
+    skills: ['Full-Stack', 'Architecture', 'DevOps', 'Leadership', 'Innovation'],
     links: [
       {
         label: 'Connect on LinkedIn',
         href: 'https://www.linkedin.com/in/ernest-uwaoma-446846409',
-        kind: 'linkedin',
-      },
-      {
-        label: 'View Portfolio',
-        href: 'https://ernestuwaomaportfolio.netlify.app',
-        kind: 'portfolio',
-      },
-    ],
-  },
-  {
-    id: 'obediah-miracle',
-    name: 'Obediah Miracle',
-    role: 'Co-Founder & Chief Security Officer',
-    photo: '/images/team/obediah.jpg',
-    bio: 'Obediah is a distinguished cybersecurity professional and ethical hacker who brings a rare combination of offensive and defensive security expertise to NexKeys. With deep proficiency in penetration testing and vulnerability assessments, she proactively identifies and eliminates critical weaknesses before adversaries can exploit them. As an ISO/IEC 27001:2022 Lead Auditor, Obediah designs and enforces information security management frameworks that keep client systems resilient, compliant, and audit-ready. Her background in secure web development ensures that every product NexKeys ships is built on a hardened foundation — security is never an afterthought but an integral part of the architecture from day one.',
-    skills: [
-      'Ethical Hacking',
-      'Cybersecurity',
-      'Penetration Testing',
-      'ISO 27001',
-      'Secure Development',
-    ],
-    links: [
-      {
-        label: 'Connect on LinkedIn',
-        href: 'https://www.linkedin.com/in/obediah-miracle-ba0b08343',
         kind: 'linkedin',
       },
     ],

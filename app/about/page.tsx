@@ -17,12 +17,12 @@ export const revalidate = 300;
 export const metadata: Metadata = {
   title: 'About',
   description:
-    'NexKeys Agency is a two-person software studio: engineering and security, working directly with the clients we build for.',
+    'NexKeys Agency is a focused software studio led by Ernest Uwaoma, building directly with the clients we serve.',
   alternates: { canonical: `${SITE.url}/about` },
   openGraph: {
     title: 'About · NexKeys Agency',
     description:
-      'A two-person software studio: engineering and security, working directly with the clients we build for.',
+      'A focused software studio led by Ernest Uwaoma, building directly with the clients we serve.',
     url: `${SITE.url}/about`,
   },
 };
@@ -55,7 +55,7 @@ export default async function AboutPage() {
 
           <Reveal delay={0.08}>
             <h1 className="mt-5 max-w-4xl font-display text-display-lg">
-              Small team.<br />
+              Focused team.<br />
               <span className="text-gradient-gold">Direct line.</span>
             </h1>
           </Reveal>
@@ -75,13 +75,13 @@ export default async function AboutPage() {
             eyebrow="The Team"
             title={
               <span id="team-heading">
-                Two people, <span className="text-gradient-gold">both hands on</span>
+                One lead, <span className="text-gradient-gold">fully hands-on</span>
               </span>
             }
-            description="You work with the people who build your product — no account layer in between."
+            description="You work directly with the people building your product no account layer in between."
           />
 
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-1">
             {TEAM.map((member, i) => (
               <Reveal key={member.id} delay={i * 0.1}>
                 <article className="group h-full overflow-hidden rounded-card border border-gold/12 bg-bg-2 transition-[border-color,box-shadow] duration-500 hover:border-gold/35 hover:shadow-lift">

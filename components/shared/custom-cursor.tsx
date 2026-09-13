@@ -12,7 +12,7 @@ import { useCapabilities } from '@/hooks/use-capabilities';
  * and confirmed a fine pointer — and it is removed on unmount.
  */
 export function CustomCursor() {
-  const { finePointer, reduced, canHeavy, ready } = useCapabilities();
+  const { finePointer, reduced, canHeavy, ready, isTouch, lowPower } = useCapabilities();
   const [enabled, setEnabled] = useState(false);
 
   const dotRef = useRef<HTMLDivElement>(null);
@@ -21,8 +21,8 @@ export function CustomCursor() {
 
   useEffect(() => {
     if (!ready) return;
-    setEnabled(finePointer && !reduced);
-  }, [ready, finePointer, reduced]);
+    setEnabled(finePointer && !reduced && !isTouch && !lowPower && canHeavy);
+  }, [ready, finePointer, reduced, isTouch, lowPower, canHeavy]);
 
   useEffect(() => {
     if (!enabled) return;

@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 
 import { NkMonogram } from '@/components/hero/nk-monogram';
 import { Magnetic } from '@/components/motion/magnetic';
@@ -21,7 +22,36 @@ const HEADLINE = [
 ];
 
 export function Hero() {
-  const { canHeavy, reduced } = useCapabilities();
+  const { canHeavy, reduced, isMobile } = useCapabilities();
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const [isPageVisible, setIsPageVisible] = useState(typeof document === 'undefined' ? true : document.visibilityState === 'visible');
+
+  useEffect(() => {
+    if (!sectionRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        setIsVisible(Boolean(entry?.isIntersecting));
+      },
+      { threshold: 0.2, rootMargin: '200px 0px' }
+    );
+
+    observer.observe(sectionRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const handleVisibility = () => {
+      setIsPageVisible(document.visibilityState === 'visible');
+    };
+
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => document.removeEventListener('visibilitychange', handleVisibility);
+  }, []);
+
+  const shouldRenderParticles = canHeavy && !reduced && !isMobile && isVisible && isPageVisible;
 
   const container = {
     hidden: {},
@@ -40,6 +70,7 @@ export function Hero() {
 
   return (
     <section
+      ref={sectionRef}
       aria-label="Introduction"
       className="relative isolate flex min-h-[100svh] items-center overflow-hidden pt-nav"
     >
@@ -48,7 +79,7 @@ export function Hero() {
         <div className="grid-overlay absolute inset-0" />
         <div className="absolute -right-24 -top-52 h-[600px] w-[600px] rounded-full bg-gold/[0.11] blur-[120px]" />
         <div className="absolute -bottom-28 -left-28 h-[500px] w-[500px] rounded-full bg-gold-dark/[0.08] blur-[120px]" />
-        {canHeavy && <ParticleField />}
+        {shouldRenderParticles && <ParticleField />}
         {/* Fade into the section below */}
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-bg" />
       </div>

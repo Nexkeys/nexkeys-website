@@ -26,12 +26,12 @@ import { useCapabilities } from '@/hooks/use-capabilities';
  * it is the single most common cause of a site "feeling slow" on mobile.
  */
 export function LenisProvider({ children }: { children: React.ReactNode }) {
-  const { reduced, ready } = useCapabilities();
+  const { reduced, ready, isTouch, finePointer } = useCapabilities();
   const lenisRef = useRef<Lenis | null>(null);
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!ready || reduced) return;
+    if (!ready || reduced || isTouch || !finePointer) return;
 
     const lenis = new Lenis({
       lerp: 0.12,
@@ -44,17 +44,28 @@ export function LenisProvider({ children }: { children: React.ReactNode }) {
 
     let rafId = 0;
     const raf = (time: number) => {
+      if (document.hidden) return;
       lenis.raf(time);
       rafId = requestAnimationFrame(raf);
     };
     rafId = requestAnimationFrame(raf);
 
+    const handleVisibility = () => {
+      if (document.hidden) {
+        lenis.stop();
+        return;
+      }
+      lenis.start();
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
     return () => {
       cancelAnimationFrame(rafId);
+      document.removeEventListener('visibilitychange', handleVisibility);
       lenis.destroy();
       lenisRef.current = null;
     };
-  }, [ready, reduced]);
+  }, [ready, reduced, isTouch, finePointer]);
 
   // Reset scroll on navigation — App Router does not do this for us with Lenis.
   useEffect(() => {
